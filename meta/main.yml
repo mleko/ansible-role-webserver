@@ -1,7 +1,7 @@
 ---
 galaxy_info:
   author: Mleko
-  description: Simple webserver)
+  description: Simple webserver
   license: MIT
   min_ansible_version: 1.2
   platforms:
