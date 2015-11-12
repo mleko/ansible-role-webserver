@@ -1,0 +1,8 @@
+---
+- name: Common | Create log dir
+  file:
+    path: "{{ common.logdir }}"
+    state: directory
+    mode: 0777
+  when: common.logdir is defined  
+  

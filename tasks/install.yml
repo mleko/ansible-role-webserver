@@ -1,0 +1,26 @@
+---
+### Debian/Ubuntu
+- name: "Install | {% if name is defined %}{{ name }} | {% endif %}Make sure repositories are added"
+  apt_repository:
+    repo: "{{ item }}"
+    state: present
+    update_cache: true
+  with_items: config.debian.repositories
+  when: ansible_os_family == "Debian" and config.debian.repositories is defined 
+
+- name: "Install | {% if name is defined %}{{ name }} | {% endif %}Make sure required packages are installed"
+  apt:
+    pkg: "{{ item }}"
+    state: latest
+    force: yes
+  with_items: config.debian.packages
+  when: ansible_os_family == "Debian"
+
+
+### Gentoo
+- name: "Install | {% if name is defined %}{{ name }} | {% endif %}Make sure required packages are installed"
+  portage:
+    package: "{{ item }}"
+    state: present
+  with_items: config.gentoo.packages
+  when: ansible_os_family == "Gentoo"

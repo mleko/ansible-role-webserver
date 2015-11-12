@@ -1,0 +1,40 @@
+---
+- include: install.yml
+  vars:
+    config: "{{ postgresql.install }}"
+    name: PostgreSQL
+  notify:
+    - reload postgresql
+  when: postresql.install is defined
+    
+- name: PostgreSQL | Make sure users are present
+  postgresql_user:
+    name: "{{ postgresql.user }}"
+    password: "{{ postgresql.password }}"
+    state: present
+  sudo: yes
+  sudo_user: postgres  
+- name: PostgreSQL | Make sure DB is available
+  postgresql_db:
+    name: "{{ postgresql.dbname }}"
+    state: present
+    owner: "{{ postgresql.user }}"
+  sudo: yes
+  sudo_user: postgres
+- name: PostgreSQL | Make sure pgsql is listening an all addresses
+  lineinfile:
+    dest: /etc/postgresql/9.4/main/postgresql.conf
+    line: "listen_addresses = '*'"
+    state: present
+    regexp: "^#?\\s*listen_addresses\\s*=.*"
+  notify:
+    - restart postgresql
+  when: postgresql.public is defined
+- name: PostgreSQL | Allow user to connect from anywhere
+  lineinfile:
+    dest: /etc/postgresql/9.4/main/pg_hba.conf
+    line: "host    all             {{ postgresql.user }}           0.0.0.0/0               md5"
+    state: present
+  notify:
+    - restart postgresql
+  when: postgresql.public is defined

@@ -1,0 +1,36 @@
+---
+- include: install.yml
+  vars:
+    config: "{{ nginx.install }}"
+    name: Nginx
+  notify:
+    - reload nginx
+  when: nginx.install is defined
+
+- name: Nginx | Make sure default vhost is disabled
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify:
+    - reload nginx
+- name: Nginx | Make sure vhost is created
+  template:
+    dest: /etc/nginx/sites-available/host
+    src: "{{ nginx.vhost.template }}"
+  notify:
+    - reload nginx
+- name: Nginx | Make sure vhost is enabled
+  file:
+    path: /etc/nginx/sites-enabled/host
+    src: /etc/nginx/sites-available/host
+    state: link
+  notify:
+    - reload nginx
+- name: Nginx | Configure nginx user
+  lineinfile:
+    dest: /etc/nginx/nginx.conf
+    line: user vagrant;
+    regexp: "^user .*$"
+    state: present
+  notify:
+    - reload nginx    

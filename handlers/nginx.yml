@@ -1,0 +1,15 @@
+---
+- name: reload nginx
+  service:
+    name: "{{ item }}"
+    enabled: yes
+    state: reloaded
+  with_items:
+    - nginx
+- name: restart nginx
+  service:
+    name: "{{ item }}"
+    enabled: yes
+    state: restarted
+  with_items:
+    - nginx

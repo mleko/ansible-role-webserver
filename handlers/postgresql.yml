@@ -1,0 +1,16 @@
+---
+- name: reload postgresql
+  service:
+    name: "{{ item }}"
+    enabled: yes
+    state: reloaded
+  with_items:
+    - postgresql
+    
+- name: restart postgresql
+  service:
+    name: "{{ item }}"
+    enabled: yes
+    state: restarted
+  with_items:
+    - postgresql

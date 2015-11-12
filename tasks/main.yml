@@ -1,0 +1,19 @@
+---
+- include: common.yml
+  when: common is defined
+
+- include: install.yml
+  config: "{{ install }}"
+  when: install is defined
+
+- include: php.yml
+  when: php is defined
+  
+- include: postgresql.yml
+  when: postgresql is defined
+  
+- include: nginx.yml
+  when: nginx is defined
+  
+- include: mysql.yml
+  when: mysql is defined

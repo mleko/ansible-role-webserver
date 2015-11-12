@@ -1,0 +1,8 @@
+---
+- name: reload php
+  service:
+    name: "{{ item }}"
+    enabled: yes
+    state: reloaded
+  with_items:
+    - php5-fpm

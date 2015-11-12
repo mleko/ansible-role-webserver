@@ -1,0 +1,21 @@
+---
+- include: install.yml
+  vars:
+    config: "{{ mysql.install }}"
+    name: MySQL
+  notify:
+    - reload mysql
+  when: mysql.install is defined
+
+- name: MySQL | Init schema
+  mysql_db:
+    name: "{{ mysql.database }}"
+    encoding: utf8
+    state: present
+    target: "{{ mysql.dump }}"
+- name: MySQL | Create users
+  mysql_user:
+    name: "{{ mysql.user }}"
+    password: "{{ mysql.password }}"
+    state: present
+    priv: "*.*:ALL"

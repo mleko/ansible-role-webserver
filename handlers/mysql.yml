@@ -1,0 +1,8 @@
+---
+- name: reload mysql
+  service:
+    name: "{{ item }}"
+    enabled: yes
+    state: reloaded
+  with_items:
+    - mysql

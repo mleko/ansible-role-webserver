@@ -1,0 +1,54 @@
+---
+- include: install.yml
+  vars:
+    config: "{{ php.install }}"
+    name: PHP
+  notify:
+    - reload php
+  when: php.install is defined
+
+- name: PHP | Configure php user
+  lineinfile:
+    dest: /etc/php5/fpm/pool.d/www.conf
+    line: user = vagrant;
+    regexp: "^user = .*$"
+    state: present
+  notify:
+    - reload php
+- name: PHP | Make sure php-fpm is listening
+  lineinfile:
+    dest: /etc/php5/fpm/php-fpm.conf
+    line: listen = 127.0.0.1:9010
+    state: present
+  notify:
+    - reload php
+- name: PHP | Make sure php is configured
+  lineinfile:
+    dest: /etc/php5/fpm/php.ini
+    line: "{{ item.line }}"
+    regexp: "{{ item.pattern }}"
+    state: present
+  with_items:
+    - { line: "display_errors = On", pattern: "^display_errors\\s*=.*$" }
+    - { line: "display_startup_errors = On", pattern: "^display_startup_errors\\s*=.*$" }
+    - { line: "date.timezone = Europe/Warsaw", pattern: "^;?date.timezone\\s*=.*$" }
+    - { line: "short_open_tag = Off", pattern: "^short_open_tag\\s*=.*$" }
+  notify:
+    - reload php
+- name: PHP | Xdebug | Make sure xdebug is configured
+  lineinfile:
+    dest: /etc/php5/fpm/conf.d/20-xdebug.ini
+    line: "{{ item.line }}"
+    state: present
+  with_items:
+    - { line: "xdebug.remote_enable = on" }
+    - { line: "xdebug.remote_connect_back = on "}
+    - { line: "xdebug.idekey = vagrant" }
+  notify:
+    - reload php
+- name: PHP | Xdebug | Ensure ENV vars are set
+  lineinfile:
+    dest: /home/vagrant/.bashrc
+    line: export XDEBUG_CONFIG="idekey=vagrant remote_host=$(netstat -rn | grep "^0.0.0.0 " | cut -d " " -f10)"
+    state: present
+    insertafter: EOF
