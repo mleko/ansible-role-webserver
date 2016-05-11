@@ -5,15 +5,15 @@
     repo: "{{ item }}"
     state: present
     update_cache: true
-  with_items: config.debian.repositories
-  when: ansible_os_family == "Debian" and config.debian.repositories is defined 
+  with_items: "{% if config.debian is defined and config.debian.repositories is defined %}{{ config.debian.repositories }}{% else %}[]{% endif %}"
+  when: ansible_os_family == "Debian"
 
 - name: "Install | {% if name is defined %}{{ name }} | {% endif %}Make sure required packages are installed"
   apt:
     pkg: "{{ item }}"
     state: latest
     force: yes
-  with_items: config.debian.packages
+  with_items: "{% if config.debian is defined and config.debian.packages is defined %}{{ config.debian.packages }}{% else %}[]{% endif %}"
   when: ansible_os_family == "Debian"
 
 
@@ -22,5 +22,5 @@
   portage:
     package: "{{ item }}"
     state: present
-  with_items: config.gentoo.packages
+  with_items: "{% if config.gentoo is defined and config.gentoo.packages is defined %}{{ config.gentoo.packages }}{% else %}[]{% endif %}"
   when: ansible_os_family == "Gentoo"
