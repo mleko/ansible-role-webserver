@@ -1,0 +1,17 @@
+---
+- name: "Install node"
+  raw: "curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.31.1/install.sh | bash && . ~/.bashrc && nvm install stable && nvm use stable"
+
+- include: install.yml
+  vars:
+    config: "{% if npm_config.install is defined %}{{ npm_config.install }}{% else %}[]{% endif %}"
+    name: NPM
+  when: npm.install is defined
+
+- name: "NPM | Make sure global libs are available"
+  npm:
+    global: true
+    state: present
+    name: "{{ item }}"
+  with_items: "{% if npm_config.globals is defined %}{{ npm_config.globals }}{% else %}[]{% endif %}"
+  when: npm_config.globals is defined
