@@ -1,0 +1,35 @@
+---
+- include: common.yml
+  vars:
+    common: "{{ webserver.common }}"
+  when: webserver.common is defined
+
+- include: install.yml
+  vars:
+    config: "{{ webserver.install }}"
+  when: webserver.install is defined
+
+- include: php.yml
+  vars:
+    php: "{{ webserver.php }}"
+  when: webserver.php is defined
+
+- include: postgresql.yml
+  vars:
+    postgresql: "{{ webserver.postgresql }}"
+  when: webserver.postgresql is defined
+
+- include: nginx.yml
+  vars:
+    nginx: "{{ webserver.nginx }}"
+  when: webserver.nginx is defined
+
+- include: mysql.yml
+  vars:
+    mysql: "{{ webserver.mysql }}"
+  when: webserver.mysql is defined
+
+- include: npm.yml
+  vars:
+    npm_config: "{{ webserver.npm }}"
+  when: webserver.npm is defined

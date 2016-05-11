@@ -5,15 +5,15 @@
     name: PostgreSQL
   notify:
     - reload postgresql
-  when: postresql.install is defined
-    
+  when: postgresql.install is defined
+
 - name: PostgreSQL | Make sure users are present
   postgresql_user:
     name: "{{ postgresql.user }}"
     password: "{{ postgresql.password }}"
     state: present
   sudo: yes
-  sudo_user: postgres  
+  sudo_user: postgres
 - name: PostgreSQL | Make sure DB is available
   postgresql_db:
     name: "{{ postgresql.dbname }}"
