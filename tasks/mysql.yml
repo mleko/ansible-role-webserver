@@ -12,7 +12,14 @@
     name: "{{ mysql.database }}"
     encoding: utf8
     state: present
+  when: mysql.dump is not defined
+- name: MySQL | Init schema with dump
+  mysql_db:
+    name: "{{ mysql.database }}"
+    encoding: utf8
+    state: present
     target: "{{ mysql.dump }}"
+  when: mysql.dump is defined
 - name: MySQL | Create users
   mysql_user:
     name: "{{ mysql.user }}"
