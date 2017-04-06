@@ -7,9 +7,13 @@
     - reload php
   when: php.install is defined
 
+- name: PHP | Define config path
+  set_fact:
+    php_config_path: "{{ php.config_path|default('/etc/php5') }}"
+
 - name: PHP | Configure php user
   lineinfile:
-    dest: /etc/php5/fpm/pool.d/www.conf
+    dest: "{{ php_config_path }}/fpm/pool.d/www.conf"
     line: user = vagrant;
     regexp: "^user = .*$"
     state: present
@@ -17,14 +21,14 @@
     - reload php
 - name: PHP | Make sure php-fpm is listening
   lineinfile:
-    dest: /etc/php5/fpm/php-fpm.conf
+    dest: "{{ php_config_path }}/fpm/php-fpm.conf"
     line: listen = 127.0.0.1:9010
     state: present
   notify:
     - reload php
 - name: PHP | Make sure php is configured
   lineinfile:
-    dest: /etc/php5/fpm/php.ini
+    dest: "{{ php_config_path }}/fpm/php.ini"
     line: "{{ item.line }}"
     regexp: "{{ item.pattern }}"
     state: present
@@ -37,7 +41,7 @@
     - reload php
 - name: PHP | Xdebug | Make sure xdebug is configured
   lineinfile:
-    dest: /etc/php5/fpm/conf.d/20-xdebug.ini
+    dest: "{{ php_config_path }}/fpm/conf.d/20-xdebug.ini"
     line: "{{ item.line }}"
     state: present
   with_items:
